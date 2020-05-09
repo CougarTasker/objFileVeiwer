@@ -30,12 +30,12 @@ public class FileLoader extends JFrame{
     public List<Tri> getTri(){
         try {
             Scanner file = new Scanner(getData());
-            List<Vect> points = new ArrayList<Vect>();
+            List<Point> points = new ArrayList<>();
             List<Tri> out = new ArrayList<Tri>();
             while (file.hasNext()){
                 switch (file.next()){
                     case "v":
-                        Vect point = new Vect(file.nextDouble(),file.nextDouble(),file.nextDouble());
+                        Point point = new Point(file.nextDouble(),file.nextDouble(),file.nextDouble());
                         points.add(point);
                     break;
                     case "f":

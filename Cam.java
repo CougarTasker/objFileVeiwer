@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Cam extends JComponent implements KeyListener, Runnable {
     private final DepthBuffer canvas;
-    private final int[] resalution = new int[]{550,550};
+    private final int[] resalution = new int[]{1000,800};
     private final double fov = Math.PI *0.7;
     private final double size = 1;//width in the 3d space
     private Vect pos;
@@ -49,7 +49,7 @@ public class Cam extends JComponent implements KeyListener, Runnable {
             g.drawRect(0,0,resalution[0],resalution[1]);
             List<Tri> cll = cull(scene);
             for(Tri face:cll){
-                List<Vect> points = face.getPoints();
+                List<Point> points = face.getPoints();
                 for (int i = 0; i < points.size(); i++) {
                     Vect to = project(points.get(i));
 
@@ -90,9 +90,9 @@ public class Cam extends JComponent implements KeyListener, Runnable {
         out.setX(out.getX()*d/(out.getZ()+d));
         out.setY(out.getY()*d/(out.getZ()+d));
 
-        double h = resalution[1]/resalution[0]*size;
+        double h =  (double) (resalution[1])/(double)(resalution[0])*size;
         out = out.add(new Vect(size/2,-h/2,0));//move point into depth buffer space
-        out = out.mul(resalution[0]/size);//scale
+        out = out.mul((double) (resalution[0])/size);//scale
         out.setY(out.getY()*-1);
         return out;
     }
@@ -156,6 +156,7 @@ public class Cam extends JComponent implements KeyListener, Runnable {
                 break;
             case "C":
                 drawCanvas = !drawCanvas;
+                //resalution[0]+=1;
                 break;
         }
         repaint();

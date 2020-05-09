@@ -61,11 +61,17 @@ public class Vect{
     public Vect mul(double d){
         return new Vect(x*d,y*d,z*d);
     }
+    public Vect div(double d){
+        return  mul(1/d);
+    }
     public Vect unit(){
         if(mag() != 0){
             return mul(1/mag());
         }
         return null;
+    }
+    public Vect interpolate(Vect end, double factor){
+        return add(end.sub(this).mul(factor));
     }
     public Vect project(Vect direction){
         Vect out = direction.unit();
