@@ -233,7 +233,7 @@ public class Vect{
     }
 
     /**
-     * constructs a vector from three compoants
+     * constructs a vector from three three position components
      * @param x the x component of the vector
      * @param y the y component of the vector
      * @param z the z component of the vector

@@ -36,7 +36,13 @@ public class FileLoader extends JFrame{
                 switch (file.next()){
                     case "v":
                         Point point = new Point(file.nextDouble(),file.nextDouble(),file.nextDouble());
-                        points.add(point);
+                        if(points.contains(point)){
+                            //if there are duplicates then remove them because there will be a seam
+                            points.add(points.get(points.indexOf(point)));
+                        }else{
+                            points.add(point);
+                        }
+
                     break;
                     case "f":
                         Tri face = new Tri( points.get(file.nextInt()-1),
