@@ -1,0 +1,180 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Cam extends JComponent implements KeyListener, Runnable {
+    private final DepthBuffer canvas;
+    private final int[] resalution = new int[]{550,550};
+    private final double fov = Math.PI *0.7;
+    private final double size = 1;//width in the 3d space
+    private Vect pos;
+    private Vect rot;
+    private List<Tri> scene = null;
+    private Thread render = null;
+    boolean drawCanvas = false;
+    Cam(List<Tri> scene){
+        super();
+        canvas = new DepthBuffer(resalution[0],resalution[1]);
+        addKeyListener(this);
+        pos=new Vect(0,0,0);
+        rot=new Vect(0,0,0);
+        this.scene = scene;
+        this.requestFocusInWindow();
+        setSize(resalution[0],resalution[1]);
+        render=new Thread(this);
+    }
+
+    public DepthBuffer getCanvas() {
+        return canvas;
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+//        this.canvas.clear();
+//        Tri test = new Tri(new Vect(0,0.1,3), new Vect(0,-0.2,3), new Vect(0.4,0,3));
+//        test.draw(this);
+//        canvas.paint(g);
+
+        if(drawCanvas){
+            if(!this.render.isAlive()){
+                render=new Thread(this);
+                render.start();
+            }
+            canvas.paint(g);
+        }else{
+            g.drawRect(0,0,resalution[0],resalution[1]);
+            List<Tri> cll = cull(scene);
+            for(Tri face:cll){
+                List<Vect> points = face.getPoints();
+                for (int i = 0; i < points.size(); i++) {
+                    Vect to = project(points.get(i));
+
+                    Vect from = project(points.get((i + 1) % points.size()));
+                    double d = size *Math.sqrt(1/(2-2*Math.cos(fov)));
+                    if(to.getZ() >-d && from.getZ()>-d) {
+                        g.drawLine((int)to.getX(),(int) to.getY(),(int) from.getX(),(int) from.getY());
+                    }
+                }
+            }
+        }
+    }
+    public boolean behind(Vect v){
+        double d = size *Math.sqrt(1/(2-2*Math.cos(fov)));
+        return v.getZ() < -d;
+    }
+    public List<Tri> cull(List<Tri> scene){
+        List<Tri> out = new ArrayList<Tri>();
+        for(Tri face : scene){
+            if(face.norm().dot(face.getPoints().get(0).sub(pos))>0){
+                out.add(face);
+            }
+        }
+        return out;
+    }
+    public void run(){
+        this.canvas.clear();
+        List<Tri> cll = cull(scene);
+        for(Tri face : cll){
+            face.draw(this);
+        }
+    }
+    public Vect project(Vect p){
+        Vect out = p.sub(this.pos);
+        out = out.rotate(this.rot);
+        double d = size *Math.sqrt(1/(2-2*Math.cos(fov)));
+        out = out.sub(Vect.Z.mul(d));
+        out.setX(out.getX()*d/(out.getZ()+d));
+        out.setY(out.getY()*d/(out.getZ()+d));
+
+        double h = resalution[1]/resalution[0]*size;
+        out = out.add(new Vect(size/2,-h/2,0));//move point into depth buffer space
+        out = out.mul(resalution[0]/size);//scale
+        out.setY(out.getY()*-1);
+        return out;
+    }
+
+    /**
+     * Invoked when a key has been typed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key typed event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    /**
+     * Invoked when a key has been pressed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key pressed event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (KeyEvent.getKeyText(e.getKeyCode())){
+            case "A":
+                rot = this.rot.add(Vect.Y.mul(Math.PI/100));
+            break;
+            case "D":
+                rot = this.rot.add(Vect.Y.mul(-Math.PI/100));
+            break;
+            case "W":
+                rot = this.rot.add(Vect.X.mul(Math.PI/100));
+            break;
+            case "S":
+                rot = this.rot.add(Vect.X.mul(-Math.PI/100));
+            break;
+            case "I":
+            case "Up":
+                pos = this.pos.add(Vect.Z.antiRotate(rot).mul(size/7));
+                break;
+            case "K":
+            case "Down":
+                pos = this.pos.sub(Vect.Z.antiRotate(rot).mul(size/7));
+                break;
+            case "L":
+            case "Right":
+                pos = this.pos.add(Vect.X.antiRotate(rot).mul(size/7));
+                break;
+            case "J":
+            case "Left":
+                pos = this.pos.sub(Vect.X.antiRotate(rot).mul(size/7));
+                break;
+            case "O":
+            case "Shift":
+                pos = this.pos.add(Vect.Y.antiRotate(rot).mul(size/7));
+                break;
+            case "U":
+                pos = this.pos.sub(Vect.Y.antiRotate(rot).mul(size/7));
+                break;
+            case "C":
+                drawCanvas = !drawCanvas;
+                break;
+        }
+        repaint();
+        System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
+    }
+
+    public Vect getRot() {
+        return rot;
+    }
+
+    /**
+     * Invoked when a key has been released.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key released event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+}
