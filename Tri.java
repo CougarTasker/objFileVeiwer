@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 public class Tri{
@@ -28,8 +29,8 @@ public class Tri{
         });
     }
     public Tri(){
-//        Random r = new Random();
-//        this.fill = new Color(r.nextFloat(),r.nextFloat(),r.nextFloat());
+        Random r = new Random();
+        this.fill = new Color(r.nextFloat(),r.nextFloat(),r.nextFloat());
 
     }
     public Tri(Point a, Point b, Point c){
@@ -53,17 +54,16 @@ public class Tri{
         return Math.sqrt(p*(p-a)*(p-b)*(p-c));
     }
     private void draw(DepthBuffer out, Vect lightDirection, Point start, Point a, Point b){
-        int stopay = (int) a.getY();
-        int stopby = (int) start.getY();
-        int miny = (int) Math.max(Math.min(stopay,stopby),0);
-        int maxy = (int) Math.min(Math.max(stopay,stopby),out.getHeight());
+
+        int miny = (int) Math.round(Math.max(Math.min(Math.min(a.getY(),b.getY()),start.getY()),0));
+        int maxy = (int) Math.round(Math.min(Math.max(Math.max(a.getY(),b.getY()),start.getY()),out.getHeight()));
         for (int y = miny; y < maxy; y++) {
             Point ls = start.lineY(a,y);
             Point le = start.lineY(b,y);
-            int stopax = (int) ls.getX();
-            int stopbx = (int) le.getX();
-            int minx = (int) Math.max(Math.min(stopax,stopbx),0);
-            int maxx = (int) Math.min(Math.max(stopax,stopbx),out.getWidth());
+            double stopax = ls.getX();
+            double stopbx = le.getX();
+            int minx = (int) Math.round(Math.max(Math.min(stopax,stopbx),0));
+            int maxx = (int) Math.round(Math.min(Math.max(stopax,stopbx),out.getWidth()));
             for (int x = minx; x < maxx; x++) {
                 Point p = ls.lineX(le,x);
                 out.setPixel(x,y,p.getZ(),this.getFill(p.getLightingFactor(lightDirection)));
@@ -109,7 +109,16 @@ public class Tri{
             return;
         }
         Vect light = Vect.Z.rotate(c.getRot());
-
+        if(mid.getY()-top.getY()<1){
+            //if the top tri has no height then just draw the bottom
+            draw(c.getCanvas(),light,bot,top,mid);
+            return;
+        }else if(bot.getY()-mid.getY()<1){
+            //if the bottom tri has no height then just draw the top
+            draw(c.getCanvas(),light,top,mid,bot);
+            return;
+        }
+        //if there is both a top and bottom triangle then separate them
         Point altmid = top.lineY(bot,mid.getY());
         draw(c.getCanvas(),light,top,altmid,mid);
         draw(c.getCanvas(),light,bot,altmid,mid);
