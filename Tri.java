@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 public class Tri{
     private List<Point> points;
-    private Color fill= Color.BLUE;
-    private double ambientlevel = 0.4;
+    private Color fill= Color.WHITE;
+    private double ambientlevel = 0.3;
     public Color getFill(double amount) {
         amount = amount*(1-ambientlevel)+ambientlevel;
         return new Color((int)(fill.getRed()*amount),(int)(fill.getGreen()*amount), (int)(fill.getBlue()*amount));
@@ -29,8 +29,8 @@ public class Tri{
         });
     }
     public Tri(){
-        Random r = new Random();
-        this.fill = new Color(r.nextFloat(),r.nextFloat(),r.nextFloat());
+//        Random r = new Random();
+//        this.fill = new Color(r.nextFloat(),r.nextFloat(),r.nextFloat());
 
     }
     public Tri(Point a, Point b, Point c){
@@ -53,13 +53,13 @@ public class Tri{
         double p = (a+b+c)/2;
         return Math.sqrt(p*(p-a)*(p-b)*(p-c));
     }
-    private void draw(DepthBuffer out, Vect lightDirection, Point start, Point a, Point b){
+    private void draw(DoubleDepthBuffer out, Vect lightDirection, Point start, Point a, Point b){
 
         int miny = (int) Math.round(Math.max(Math.min(Math.min(a.getY(),b.getY()),start.getY()),0));
         int maxy = (int) Math.round(Math.min(Math.max(Math.max(a.getY(),b.getY()),start.getY()),out.getHeight()));
         for (int y = miny; y < maxy; y++) {
-            Point ls = start.lineY(a,y);
-            Point le = start.lineY(b,y);
+            Point ls = start.lineY(a,y+0.5);
+            Point le = start.lineY(b,y+0.5);
             double stopax = ls.getX();
             double stopbx = le.getX();
             int minx = (int) Math.round(Math.max(Math.min(stopax,stopbx),0));
@@ -85,6 +85,7 @@ public class Tri{
             public void accept(Vect in) {
                 Vect out = c.project(in);
                 in.set(out);
+                //c.getCanvas().setPixel((int) out.getX(),(int) out.getY(),0,Color.WHITE);
             }
         });
 

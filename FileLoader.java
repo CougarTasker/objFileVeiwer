@@ -45,14 +45,17 @@ public class FileLoader extends JFrame{
 
                     break;
                     case "f":
-                        Tri face = new Tri( points.get(file.nextInt()-1),
-                                            points.get(file.nextInt()-1),
-                                            points.get(file.nextInt()-1));
+                        int a = Integer.parseInt(file.next().split("/")[0]);
+                        int b = Integer.parseInt(file.next().split("/")[0]);
+                        int c = Integer.parseInt(file.next().split("/")[0]);
+                        Tri face = new Tri( points.get(a-1),
+                                            points.get(b-1),
+                                            points.get(c-1));
 
                         out.add(face);
                     break;
                     default:
-                        System.out.println("other");
+                        //System.out.println("other");
                     break;
                 }
             }

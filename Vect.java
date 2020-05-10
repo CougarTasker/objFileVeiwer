@@ -258,11 +258,17 @@ public class Vect{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vect vect = (Vect) o;
-        return Double.compare(vect.x, x) == 0 &&
-                Double.compare(vect.y, y) == 0 &&
-                Double.compare(vect.z, z) == 0;
+        return dblEql(vect.x, x)  &&
+                dblEql(vect.y, y)  &&
+                dblEql(vect.z, z) ;
     }
-
+    public boolean dblEql(double a,double b){
+        if (Double.compare(a,b) == 0) return true;
+//         long abin = Double.doubleToLongBits(a);
+//        long bbin =  Double.doubleToLongBits(a);
+//        if((abin & 0xffffffffffff0000L)==(bbin & 0xffffffffffff0000L)) return true;
+        return false;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(x, y, z);

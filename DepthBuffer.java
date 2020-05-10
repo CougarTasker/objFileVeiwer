@@ -7,8 +7,8 @@ import java.util.List;
 import static java.awt.image.ImageConsumer.STATICIMAGEDONE;
 
 public class DepthBuffer{
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
     private Color[][] img;
     private double[][] depth;
     DepthBuffer(int width, int height){
@@ -20,8 +20,7 @@ public class DepthBuffer{
     }
 
     public void clear(){
-        img = new Color[width][height];
-        depth = new double[width][height];
+       img = new Color[width][height];
     }
     synchronized void setPixel(int x,int y,double z,Color c){
         if(x<0 || x>= width || y<0 || y>=height){
@@ -32,7 +31,6 @@ public class DepthBuffer{
             img[x][y] = c;
         }
     }
-
     public int getHeight() {
         return height;
     }

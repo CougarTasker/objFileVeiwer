@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cam extends JComponent implements KeyListener, Runnable {
-    private final DepthBuffer canvas;
-    private final int[] resalution = new int[]{1000,800};
+    private final DoubleDepthBuffer canvas;
+    private final int[] resalution = new int[]{1500,900};
     private final double fov = Math.PI *0.7;
     private final double size = 1;//width in the 3d space
     private Vect pos;
@@ -17,7 +17,7 @@ public class Cam extends JComponent implements KeyListener, Runnable {
     boolean drawCanvas = false;
     Cam(List<Tri> scene){
         super();
-        canvas = new DepthBuffer(resalution[0],resalution[1]);
+        canvas = new DoubleDepthBuffer(resalution[0],resalution[1]);
         addKeyListener(this);
         pos=new Vect(0,0,0);
         rot=new Vect(0,0,0);
@@ -25,9 +25,22 @@ public class Cam extends JComponent implements KeyListener, Runnable {
         this.requestFocusInWindow();
         setSize(resalution[0],resalution[1]);
         render=new Thread(this);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    repaint();
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
-    public DepthBuffer getCanvas() {
+    public DoubleDepthBuffer getCanvas() {
         return canvas;
     }
 
@@ -45,6 +58,7 @@ public class Cam extends JComponent implements KeyListener, Runnable {
                 render.start();
             }
             canvas.paint(g);
+            canvas.doneReading();
         }else{
             g.drawRect(0,0,resalution[0],resalution[1]);
             List<Tri> cll = cull(scene);
@@ -81,6 +95,7 @@ public class Cam extends JComponent implements KeyListener, Runnable {
         for(Tri face : cll){
             face.draw(this);
         }
+        this.canvas.doneWriting();
     }
     public Vect project(Vect p){
         Vect out = p.sub(this.pos);
