@@ -1,35 +1,39 @@
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class FileLoader extends JFrame{
-    public static void main(String[] args) {
-        FileLoader a = new FileLoader();
-    }
-    private File data = null;
-    FileLoader(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+public class FileLoader{
+    private Component parent;
+    FileLoader(Component parent){
+        this.parent = parent;
     }
     private File getData() {
-        if (data == null){
+
             JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter("obj files","obj");
             chooser.setFileFilter(filter);
-            if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-                this.data = chooser.getSelectedFile();
+            if(chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION){
+                return chooser.getSelectedFile();
+            }else{
+                return null;
             }
-        }
-        return data;
     }
 
     public List<Tri> getTri(){
+        return getTri(getData());
+    }
+    public List<Tri> getTri(File f){
+        if (f == null){
+            return null;
+        }
         try {
-            Scanner file = new Scanner(getData());
+            Scanner file = new Scanner(f);
             List<Point> points = new ArrayList<>();
             List<Tri> out = new ArrayList<Tri>();
             while (file.hasNext()){

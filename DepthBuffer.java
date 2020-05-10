@@ -55,10 +55,9 @@ public class DepthBuffer{
             for (int y = 0; y < height; y++) {
                 if(img[x][y]!= null){
                     g.setColor(img[x][y]);
-                }else{
-                    g.setColor(Color.BLACK);
+                    g.fillRect(offsetx+x*sf,offsety+y*sf,sf,sf);
                 }
-                g.fillRect(offsetx+x*sf,offsety+y*sf,sf,sf);
+
             }
         }
     }

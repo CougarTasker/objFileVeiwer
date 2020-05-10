@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Cam extends JComponent implements KeyListener, Runnable {
     private final DoubleDepthBuffer canvas;
-    private final int[] resalution = new int[]{1500,900};
+    private final int[] resalution = new int[]{600,400};
     private final double fov = Math.PI *0.7;
     private final double size = 1;//width in the 3d space
     private Vect pos;
@@ -38,6 +38,10 @@ public class Cam extends JComponent implements KeyListener, Runnable {
                 }
             }
         }).start();
+    }
+
+    public void setScene(List<Tri> scene) {
+        this.scene = scene;
     }
 
     public DoubleDepthBuffer getCanvas() {
@@ -81,6 +85,9 @@ public class Cam extends JComponent implements KeyListener, Runnable {
         return v.getZ() < -d;
     }
     public List<Tri> cull(List<Tri> scene){
+        if(scene == null){
+            return new ArrayList<Tri>();
+        }
         List<Tri> out = new ArrayList<Tri>();
         for(Tri face : scene){
             if(face.norm().dot(face.getPoints().get(0).sub(pos))>0){
