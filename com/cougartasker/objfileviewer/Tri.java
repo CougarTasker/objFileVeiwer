@@ -1,3 +1,4 @@
+package com.cougartasker.objfileviewer;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -109,7 +110,9 @@ public class Tri{
         if(bot.sub(top).getY()<1){//if the triangles height is less than a pixle dont draw it
             return;
         }
-        Vect light = Vect.Z.rotate(c.getRot());
+
+        Vect light = Vect.Z;
+
         if(mid.getY()-top.getY()<1){
             //if the top tri has no height then just draw the bottom
             draw(c.getCanvas(),light,bot,top,mid);

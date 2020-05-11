@@ -1,4 +1,4 @@
-package com.cougartasker.obj
+package com.cougartasker.objfileviewer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
