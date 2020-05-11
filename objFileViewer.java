@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -58,7 +59,7 @@ public class objFileViewer extends JFrame implements ActionListener {
         message.setText("Cougar Tasker 2020");
         c.gridy=3;
         add(message,c);
-        setSize(620,600);
+        setSize(650,600);
         setVisible(true);
         view.requestFocusInWindow();
 
@@ -80,7 +81,9 @@ public class objFileViewer extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         FileLoader fl = new FileLoader(this);
-        view.setScene(fl.getTri());
+        File f = fl.getData();
+        view.setScene(fl.getTri(f));
+        view.setPos(fl.getPoints(f));
         view.requestFocusInWindow();
     }
 }

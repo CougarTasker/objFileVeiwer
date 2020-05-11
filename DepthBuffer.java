@@ -60,5 +60,6 @@ public class DepthBuffer{
 
             }
         }
+        g.drawRoundRect(offsetx,offsety,sf*width,sf*height,10,10);
     }
 }

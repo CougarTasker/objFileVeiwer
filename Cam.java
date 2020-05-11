@@ -40,6 +40,35 @@ public class Cam extends JComponent implements KeyListener, Runnable {
         }).start();
     }
 
+    public void setPos(Vect pos) {
+        this.pos = pos;
+    }
+    public void setPos(List<Point> pos){
+        Vect bot = Vect.Y.mul(Double.POSITIVE_INFINITY);
+        Vect top = Vect.Y.mul(Double.NEGATIVE_INFINITY);
+        Vect sum = new Vect(0,0,0);
+        int count = 0;
+        for(Point v: pos){
+            count +=1;
+            sum = v.add(sum);
+            if(v.getY() > top.getY()){
+                top = v;
+            }
+            if(v.getY() < bot.getY()){
+                bot = v;
+            }
+        }
+        double objSize = top.sub(bot).mag();
+        Vect centre = sum.div(count);
+        double d = size *Math.sqrt(1/(2-2*Math.cos(fov)));
+        double h = size*resalution[1]/resalution[0];
+
+        double back = 2*objSize*d/h;
+        this.pos = centre.sub(Vect.Z.mul(back));
+
+    }
+
+
     public void setScene(List<Tri> scene) {
         this.scene = scene;
     }
@@ -64,7 +93,10 @@ public class Cam extends JComponent implements KeyListener, Runnable {
             canvas.paint(g);
             canvas.doneReading();
         }else{
-            g.drawRect(0,0,resalution[0],resalution[1]);
+            int offsetx = (g.getClipBounds().width - resalution[0])/2;
+            int offsety = (g.getClipBounds().height - resalution[1])/2;
+
+            g.drawRoundRect(offsetx,offsety,resalution[0],resalution[1],10,10);
             List<Tri> cll = cull(scene);
             for(Tri face:cll){
                 List<Point> points = face.getPoints();
@@ -74,7 +106,10 @@ public class Cam extends JComponent implements KeyListener, Runnable {
                     Vect from = project(points.get((i + 1) % points.size()));
                     double d = size *Math.sqrt(1/(2-2*Math.cos(fov)));
                     if(to.getZ() >-d && from.getZ()>-d) {
-                        g.drawLine((int)to.getX(),(int) to.getY(),(int) from.getX(),(int) from.getY());
+                        g.drawLine(
+                                offsetx + (int) to.getX()   ,offsety+(int) to.getY(),
+                                offsetx + (int) from.getX() ,offsety+(int) from.getY()
+                        );
                     }
                 }
             }
@@ -153,6 +188,12 @@ public class Cam extends JComponent implements KeyListener, Runnable {
             case "S":
                 rot = this.rot.add(Vect.X.mul(-Math.PI/100));
             break;
+            case "E":
+                rot = this.rot.add(Vect.Z.mul(-Math.PI/100));
+                break;
+            case "Q":
+                rot = this.rot.add(Vect.Z.mul(Math.PI/100));
+                break;
             case "I":
             case "Up":
                 pos = this.pos.add(Vect.Z.antiRotate(rot).mul(size/7));

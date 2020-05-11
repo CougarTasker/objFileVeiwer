@@ -5,6 +5,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,7 +14,7 @@ public class FileLoader{
     FileLoader(Component parent){
         this.parent = parent;
     }
-    private File getData() {
+    public File getData() {
 
             JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter("obj files","obj");
@@ -28,9 +29,33 @@ public class FileLoader{
     public List<Tri> getTri(){
         return getTri(getData());
     }
+    public List<Point> getPoints(File f){
+        if (f == null){
+            return new ArrayList<Point>();
+        }
+        Scanner file = null;
+        try {
+            file = new Scanner(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        List<Point> points = new ArrayList<>();
+        while (file.hasNext()) {
+            if (file.next().equals("v")) {
+                Point point = new Point(file.nextDouble(), file.nextDouble(), file.nextDouble());
+                if (points.contains(point)) {
+                    //if there are duplicates then remove them because there will be a seam
+                    points.add(points.get(points.indexOf(point)));
+                } else {
+                    points.add(point);
+                }
+            }
+        }
+        return points;
+    }
     public List<Tri> getTri(File f){
         if (f == null){
-            return null;
+            return new ArrayList<Tri>();
         }
         try {
             Scanner file = new Scanner(f);
