@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.formdev.flatlaf.FlatDarkLaf;
 
-public class objFileViewer extends JFrame implements ActionListener {
+public class ObjFileViewer extends JFrame implements ActionListener {
     private Cam view;
-    objFileViewer(){
+    ObjFileViewer(){
         super();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
@@ -66,12 +66,7 @@ public class objFileViewer extends JFrame implements ActionListener {
 
     }
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel( new FlatDarkLaf() );
-        } catch( Exception ex ) {
-            System.err.println( "Failed to initialize LaF" );
-        }
-        objFileViewer t = new objFileViewer();
+        ObjFileViewer t = new ObjFileViewer();
     }
 
     /**

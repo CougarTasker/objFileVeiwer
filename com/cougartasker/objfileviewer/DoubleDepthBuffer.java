@@ -7,6 +7,7 @@ public class DoubleDepthBuffer{
     private DepthBuffer b;
     boolean bDone = false;
     private boolean writinga = true;
+    public boolean depthMode = false;
     DoubleDepthBuffer(int width, int height){
         a = new DepthBuffer(width,height);
         b = new DepthBuffer(width,height);
@@ -50,9 +51,9 @@ public class DoubleDepthBuffer{
     public void paint(Graphics g){
         start(true);
         if(writinga){
-            b.paint(g);
+            b.paint(g,depthMode);
         }else{
-            a.paint(g);
+            a.paint(g,depthMode);
         }
     }
     public int getHeight() {

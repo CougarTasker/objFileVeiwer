@@ -205,7 +205,6 @@ public class Vect{
      * @return the rotated vector
      */
     public Vect rotate(Vect euclid){
-        Vect  x = X.clone();
         Vect y = Y.clone();
         Vect z = Z.clone();
         Vect out = this.rotate(X,euclid.getX());

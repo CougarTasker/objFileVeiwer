@@ -5,6 +5,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,8 +16,8 @@ public class FileLoader{
         this.parent = parent;
     }
     public File getData() {
-
-            JFileChooser chooser = new JFileChooser();
+            JFileChooser chooser = new JFileChooser();// new File(this.getClass().getResource("..").toURI())
+            
             FileNameExtensionFilter filter = new FileNameExtensionFilter("obj files","obj");
             chooser.setFileFilter(filter);
             if(chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION){
